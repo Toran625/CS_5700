@@ -1,5 +1,5 @@
 class Created : UpdateMethod {
     override fun processInfo(update: ShipmentUpdate, shipment: Shipment) {
-        shipment.status = update.newStatus
+        shipment.status = update.updateType
     }
 }

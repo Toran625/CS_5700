@@ -1,5 +1,7 @@
 class Location : UpdateMethod {
     override fun processInfo(update: ShipmentUpdate, shipment: Shipment) {
-        shipment.status = update.newStatus
+        update.otherInfo?.let {
+            shipment.currentLocation = it
+        }
     }
 }

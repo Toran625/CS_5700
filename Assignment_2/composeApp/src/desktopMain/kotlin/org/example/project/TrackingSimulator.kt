@@ -22,25 +22,37 @@ class TrackingSimulator(private val filepath: String) {
     }
 
     private fun parseAndApplyUpdate(line: String) {
-        val parts = line.split(",")
-        val status = parts[0]
-        val shipmentId = parts[1]
-        val timestamp = parts[2].toLong()
-        if (parts.size == 4) val otherInfo = parts[3] else null
+        val parts = line.split(",", limit = 4)
 
-        val shipment = findShipment(shipmentId) ?: return
+        val updateType = parts[0]
+        val shipmentId = parts[1]
+        val timestamp = parts[2].toLongOrNull() ?: return
+        val otherInfo = parts.getOrNull(3)
+
+        val method = getUpdateMethodFor(updateType)
 
         val update = ShipmentUpdate(
-            previousStatus = shipment.status,
-            newStatus = status,
+            updateType = updateType,
+            shipmentId = shipmentId,
             timestamp = timestamp,
-            method = getUpdateMethodFor(status),
+            method = method,
             otherInfo = otherInfo
         )
 
-        shipment.addUpdate(update)
-        update.applyToShipment(shipment)
+        val existingShipment = findShipment(shipmentId)
+
+        val shipment = if (updateType.lowercase() == "created" && method is Created && existingShipment == null) {
+            createShipment(update).also { addShipment(it) }
+        } else {
+            existingShipment
+        }
+
+        if (shipment != null){
+            shipment.addUpdate(update)
+            update.applyToShipment(shipment)
+        }
     }
+
 
     private fun getUpdateMethodFor(status: String): UpdateMethod {
         return when (status.lowercase()) {
@@ -54,6 +66,15 @@ class TrackingSimulator(private val filepath: String) {
             "noteadded" -> NoteAdded()
             else -> throw IllegalArgumentException("Unknown update method: $status")
         }
+    }
+
+    private fun createShipment(update: ShipmentUpdate): Shipment {
+        return Shipment(
+            id = update.shipmentId,
+            status = update.updateType,
+            expectedDeliveryDateTimestamp = 0,
+            currentLocation = update.otherInfo ?: "Origin Facility"
+        )
     }
     
 }
