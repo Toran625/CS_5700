@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PointTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-27T01:08:02.358Z" hostname="TABLET-9O0UMNV2" time="0.04">
+  <properties/>
+  <testcase name="testMove()" classname="PointTest" time="0.04"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,3 +1,5 @@
+package org.example.project
+
 import java.util.*
 
 class Shipment(
@@ -38,6 +40,7 @@ class Shipment(
     }
 
     fun addUpdate(update: ShipmentUpdate) {
+        println("Update added $update")
         updateHistory.add(update)
         // notifyObservers()
     }

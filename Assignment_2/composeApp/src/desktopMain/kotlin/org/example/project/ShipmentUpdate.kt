@@ -1,3 +1,5 @@
+package org.example.project
+
 data class ShipmentUpdate(
     val updateType: String,
     val shipmentId: String,

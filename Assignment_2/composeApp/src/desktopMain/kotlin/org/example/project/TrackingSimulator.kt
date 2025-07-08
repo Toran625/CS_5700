@@ -1,6 +1,8 @@
+package org.example.project
+
 import kotlinx.coroutines.*
 import java.io.*
-package updateMethods
+
 
 class TrackingSimulator(private val filepath: String) {
     private val shipments = mutableListOf<Shipment>()
@@ -10,8 +12,8 @@ class TrackingSimulator(private val filepath: String) {
     fun addShipment(shipment: Shipment) = shipments.add(shipment)
     
 
-    fun runSimulation() {
-        GlobalScope.launch {
+    suspend fun runSimulation() = coroutineScope{
+        launch {
             File(filepath).useLines { lines ->
                 lines.forEach { line ->
                     parseAndApplyUpdate(line)

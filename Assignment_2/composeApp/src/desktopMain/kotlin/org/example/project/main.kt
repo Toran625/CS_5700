@@ -2,11 +2,14 @@ package org.example.project
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlinx.coroutines.*
 
 fun main() {
 
-    val trackingSimulator = TrackingSimulator()
-    trackingSimulator.start()
+    val trackingSimulator = TrackingSimulator("test.txt")
+    runBlocking{
+        trackingSimulator.runSimulation()
+    }
 
     application {
         Window(
