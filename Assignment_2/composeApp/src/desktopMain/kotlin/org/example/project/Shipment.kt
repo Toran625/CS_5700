@@ -3,32 +3,11 @@ package org.example.project
 import java.util.*
 
 class Shipment(
-    id: String,
-    status: String,
-    expectedDeliveryDateTimestamp: Long,
-    currentLocation: String
-) {
-    private var _id = id
-    private var _status = status
-    private var _expectedDeliveryDateTimestamp = expectedDeliveryDateTimestamp
-    private var _currentLocation = currentLocation
-
-    var id: String
-        get() = _id
-        set(value) { _id = value }
-
-    var status: String
-        get() = _status
-        set(value) { _status = value }
-
-    var expectedDeliveryDateTimestamp: Long
-        get() = _expectedDeliveryDateTimestamp
-        set(value) { _expectedDeliveryDateTimestamp = value }
-
+    var id: String,
+    var status: String,
+    var expectedDeliveryDateTimestamp: Long,
     var currentLocation: String
-        get() = _currentLocation
-        set(value) { _currentLocation = value }
-
+) {
     val notes = mutableListOf<String>()
     val updateHistory = mutableListOf<ShipmentUpdate>()
 
@@ -40,9 +19,8 @@ class Shipment(
     }
 
     fun addUpdate(update: ShipmentUpdate) {
-        println("Update added $update")
         updateHistory.add(update)
-        // notifyObservers()
+        notifyObservers()
     }
 
     fun addObserver(observer: TrackerViewHelper) {
@@ -53,7 +31,14 @@ class Shipment(
         observers.remove(observer)
     }
 
-    // fun notifyObservers() {
-    //     observers.forEach { it.onShipmentUpdated(this) }
-    // }
+    fun notifyObservers() {
+        if (id == "s10000") {
+            println("id: $id")
+            println("status: $status")
+            println("expected delivery: $expectedDeliveryDateTimestamp")
+            println("location: $currentLocation")
+            notes.forEach { println(it) }
+            println("\n\n\n\n\n\n\n\n\n")
+        }
+    }
 }
