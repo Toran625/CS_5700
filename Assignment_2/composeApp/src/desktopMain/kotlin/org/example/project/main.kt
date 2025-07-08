@@ -7,16 +7,16 @@ import kotlinx.coroutines.*
 fun main() {
 
     val trackingSimulator = TrackingSimulator("test.txt")
-    runBlocking{
-        trackingSimulator.runSimulation()
-    }
 
     application {
+        CoroutineScope(Dispatchers.Default).launch{
+            trackingSimulator.runSimulation()
+        }
         Window(
             onCloseRequest = ::exitApplication,
             title = "Assignment_2",
         ) {
-            App()
+            App(trackingSimulator)
         }
     }
 

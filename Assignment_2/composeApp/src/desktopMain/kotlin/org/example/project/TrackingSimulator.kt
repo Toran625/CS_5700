@@ -8,13 +8,11 @@ class TrackingSimulator(private val filepath: String) {
     private val shipments = mutableListOf<Shipment>()
 
 
-    suspend fun runSimulation() = coroutineScope{
-        launch {
-            File(filepath).useLines { lines ->
-                lines.forEach { line ->
-                    parseAndApplyUpdate(line)
-                    delay(1000)
-                }
+    suspend fun runSimulation(){
+        File(filepath).useLines { lines ->
+            lines.forEach { line ->
+                parseAndApplyUpdate(line)
+                delay(1000)
             }
         }
     }

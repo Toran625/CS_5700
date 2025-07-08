@@ -7,38 +7,30 @@ class Shipment(
     var status: String,
     var expectedDeliveryDateTimestamp: Long,
     var currentLocation: String
-) {
+): Subject<ShipmentObserver> {
     val notes = mutableListOf<String>()
     val updateHistory = mutableListOf<ShipmentUpdate>()
 
-    private val observers = mutableListOf<TrackerViewHelper>()
+    private val observers = mutableListOf<ShipmentObserver>()
 
     fun addNote(note: String) {
-        notes.add(note)
-        // notifyObservers()
+        notes += note
     }
 
     fun addUpdate(update: ShipmentUpdate) {
-        updateHistory.add(update)
+        updateHistory += update
         notifyObservers()
     }
 
-    fun addObserver(observer: TrackerViewHelper) {
-        observers.add(observer)
+    override fun addObserver(observer: ShipmentObserver) {
+        observers += observer
     }
 
-    fun removeObserver(observer: TrackerViewHelper) {
-        observers.remove(observer)
+    override fun removeObserver(observer: ShipmentObserver) {
+        observers -= observer
     }
 
-    fun notifyObservers() {
-        if (id == "s10000") {
-            println("id: $id")
-            println("status: $status")
-            println("expected delivery: $expectedDeliveryDateTimestamp")
-            println("location: $currentLocation")
-            notes.forEach { println(it) }
-            println("\n\n\n\n\n\n\n\n\n")
-        }
+    override fun notifyObservers() {
+        observers.forEach{it.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory)}
     }
 }
