@@ -1,13 +1,14 @@
 package org.example.project
 
 data class ShipmentUpdate(
-    val updateType: String,
-    val shipmentId: String,
-    val timestamp: Long,
-    val method: UpdateMethod,
-    val otherInfo: String? = null
+    var updateType: String,
+    var shipmentId: String,
+    var timestamp: Long,
+    var method: UpdateMethod,
+    var otherInfo: String? = null
 ) {
     fun applyToShipment(shipment: Shipment) {
         method.processInfo(this, shipment)
+        shipment.addUpdate(this)
     }
 }

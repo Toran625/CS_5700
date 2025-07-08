@@ -7,21 +7,31 @@ import java.io.*
 class TrackingSimulator(private val filepath: String) {
     private val shipments = mutableListOf<Shipment>()
 
-    fun findShipment(id: String): Shipment? = shipments.find { it.id == id }
 
-    fun addShipment(shipment: Shipment) = shipments.add(shipment)
-    
-
-    suspend fun runSimulation() = coroutineScope{
-        launch {
-            File(filepath).useLines { lines ->
-                lines.forEach { line ->
-                    parseAndApplyUpdate(line)
-                    delay(1000)
-                }
+    suspend fun runSimulation(){
+        File(filepath).useLines { lines ->
+            lines.forEach { line ->
+                parseAndApplyUpdate(line)
+                delay(1000)
             }
         }
     }
+
+
+    fun findShipment(id: String): Shipment? = shipments.find { it.id == id }
+
+
+    fun addShipment(update: ShipmentUpdate): Shipment {
+        val shipment = Shipment(
+            id = update.shipmentId,
+            status = update.updateType,
+            expectedDeliveryDateTimestamp = 0,
+            currentLocation = update.otherInfo ?: "Origin Facility"
+        )
+        shipments.add(shipment)
+        return shipment
+    }
+
 
     private fun parseAndApplyUpdate(line: String) {
         val parts = line.split(",", limit = 4)
@@ -44,13 +54,12 @@ class TrackingSimulator(private val filepath: String) {
         val existingShipment = findShipment(shipmentId)
 
         val shipment = if (updateType.lowercase() == "created" && method is Created && existingShipment == null) {
-            createShipment(update).also { addShipment(it) }
+            addShipment(update)
         } else {
             existingShipment
         }
 
         if (shipment != null){
-            shipment.addUpdate(update)
             update.applyToShipment(shipment)
         }
     }
@@ -69,14 +78,4 @@ class TrackingSimulator(private val filepath: String) {
             else -> throw IllegalArgumentException("Unknown update method: $status")
         }
     }
-
-    private fun createShipment(update: ShipmentUpdate): Shipment {
-        return Shipment(
-            id = update.shipmentId,
-            status = update.updateType,
-            expectedDeliveryDateTimestamp = 0,
-            currentLocation = update.otherInfo ?: "Origin Facility"
-        )
-    }
-    
 }
