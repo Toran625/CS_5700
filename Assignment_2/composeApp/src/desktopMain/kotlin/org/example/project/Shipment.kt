@@ -24,6 +24,7 @@ class Shipment(
 
     override fun addObserver(observer: ShipmentObserver) {
         observers += observer
+        observer.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory)
     }
 
     override fun removeObserver(observer: ShipmentObserver) {

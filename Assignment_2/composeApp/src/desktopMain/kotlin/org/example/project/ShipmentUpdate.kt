@@ -1,6 +1,7 @@
 package org.example.project
 
 data class ShipmentUpdate(
+    var previousStatus: String,
     var updateType: String,
     var shipmentId: String,
     var timestamp: Long,

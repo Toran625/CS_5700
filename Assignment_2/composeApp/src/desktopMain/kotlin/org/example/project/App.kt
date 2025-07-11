@@ -19,17 +19,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 import assignment_2.composeapp.generated.resources.Res
 import assignment_2.composeapp.generated.resources.compose_multiplatform
-
-
 
 @Composable
 @Preview
 fun App(trackingSimulator: TrackingSimulator) {
     var shipmentId by remember { mutableStateOf("") }
-    var helper by remember { mutableStateOf<TrackerViewHelper?>(null) }
+    val helpers = remember { mutableStateListOf<TrackerViewHelper>() }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    if (showError) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(3000)
+            showError = false
+        }
+    }
 
     MaterialTheme {
         Column(
@@ -44,32 +53,46 @@ fun App(trackingSimulator: TrackingSimulator) {
                 onValueChange = { shipmentId = it },
                 label = { Text("Enter Shipment ID") }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(onClick = {
                 val shipment = trackingSimulator.findShipment(shipmentId)
-                if (shipment != null) {
+                if (shipment == null) {
+                    errorMessage = "Shipment ID \"$shipmentId\" not found."
+                    showError = true
+                } else if (helpers.any { it.id == shipmentId }) {
+                    errorMessage = "Shipment ID \"$shipmentId\" is already being tracked."
+                    showError = true
+                } else {
                     val newHelper = TrackerViewHelper()
                     shipment.addObserver(newHelper)
-                    helper = newHelper
+                    helpers.add(newHelper)
+                    showError = false
                 }
             }) {
-                Text("Subscribe to Shipment")
+                Text("Track Shipment")
+            }
+
+            AnimatedVisibility(visible = showError) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            helper?.let {
-                Text("Shipment ID: ${it.id}")
-                Text("Status: ${it.status}")
-                Text("Location: ${it.currentLocation}")
-                Text("Expected Delivery: ${it.expectedDeliveryDateTimestamp}")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Notes:")
-                it.notes.forEach { note -> Text("- $note") }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Update History:")
-                it.updateHistory.forEach { update ->
-                    Text("- ${update.updateType} at ${update.timestamp}")
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                items(helpers, key = { it.id }) { helper ->
+                    TrackerCard(
+                        helper = helper,
+                        onClose = { helpers.remove(helper) }
+                    )
                 }
             }
         }
