@@ -30,5 +30,4 @@ class TrackerViewHelper : ShipmentObserver{
         this.updateHistory.clear()
         this.updateHistory.addAll(updateHistory)
     }
-
 }

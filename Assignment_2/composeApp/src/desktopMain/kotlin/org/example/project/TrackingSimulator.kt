@@ -43,15 +43,17 @@ class TrackingSimulator(private val filepath: String) {
 
         val method = getUpdateMethodFor(updateType)
 
+        val existingShipment = findShipment(shipmentId)
+        val previousStatus = existingShipment?.status ?: "N/A"
+
         val update = ShipmentUpdate(
+            previousStatus = previousStatus,
             updateType = updateType,
             shipmentId = shipmentId,
             timestamp = timestamp,
             method = method,
             otherInfo = otherInfo
         )
-
-        val existingShipment = findShipment(shipmentId)
 
         val shipment = if (updateType.lowercase() == "created" && method is Created && existingShipment == null) {
             addShipment(update)
