@@ -6,17 +6,17 @@ import kotlinx.coroutines.*
 
 fun main() {
 
-    val trackingSimulator = TrackingSimulator("test.txt")
+    val trackingServer = TrackingServer()
 
     application {
         CoroutineScope(Dispatchers.Default).launch{
-            trackingSimulator.runSimulation()
+            trackingServer.startServer()
         }
         Window(
             onCloseRequest = ::exitApplication,
             title = "Assignment_2",
         ) {
-            App(trackingSimulator)
+            App(trackingServer)
         }
     }
 }

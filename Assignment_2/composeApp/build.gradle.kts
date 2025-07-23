@@ -23,7 +23,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta03")
         }
@@ -32,6 +32,16 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            val ktorVersion = "2.3.7"
+            implementation("io.ktor:ktor-server-core:$ktorVersion")
+            implementation("io.ktor:ktor-server-netty:$ktorVersion")
+            implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+            implementation("ch.qos.logback:logback-classic:1.4.11") // For logging
+            implementation("io.ktor:ktor-server-resources:${ktorVersion}")
+            implementation("io.ktor:ktor-server-host-common:${ktorVersion}")
+            implementation("io.ktor:ktor-server-auto-head-response:${ktorVersion}")
+            implementation("io.ktor:ktor-server-html-builder:${ktorVersion}")
         }
     }
 }
