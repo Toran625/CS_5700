@@ -27,7 +27,7 @@ import assignment_2.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App(trackingSimulator: TrackingSimulator) {
+fun App(trackingServer: TrackingServer) {
     var shipmentId by remember { mutableStateOf("") }
     val helpers = remember { mutableStateListOf<TrackerViewHelper>() }
     var showError by remember { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun App(trackingSimulator: TrackingSimulator) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                val shipment = trackingSimulator.findShipment(shipmentId)
+                val shipment = trackingServer.findShipment(shipmentId)
                 if (shipment == null) {
                     errorMessage = "Shipment ID \"$shipmentId\" not found."
                     showError = true

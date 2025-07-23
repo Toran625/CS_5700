@@ -17,6 +17,26 @@ class Shipment(
         notes += note
     }
 
+    fun receiveUpdate(
+        updateType: String,
+        shipmentId: String,
+        timestamp: Long,
+        otherInfo: String?,
+        method: UpdateMethod
+    ) {
+
+        val update = ShipmentUpdate(
+            previousStatus = this.status,
+            updateType = updateType,
+            shipmentId = shipmentId,
+            timestamp = timestamp,
+            method = method,
+            otherInfo = otherInfo
+        )
+
+        update.applyToShipment(this)
+    }
+
     fun addUpdate(update: ShipmentUpdate) {
         updateHistory += update
         notifyObservers()

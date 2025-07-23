@@ -1,0 +1,27 @@
+<!-- src/main/resources/static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tracking Frontend</title>
+</head>
+<body>
+<h1>Shipment Update Sender</h1>
+<input type="text" id="rawUpdate" placeholder="created,ABC123,1721650000000,Chicago" />
+<button onclick="sendUpdate()">Send Update</button>
+
+<script>
+    function sendUpdate() {
+        const rawUpdate = document.getElementById("rawUpdate").value;
+        fetch("/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rawUpdate })
+        })
+        .then(res => res.text())
+        .then(alert)
+        .catch(err => alert("Error: " + err));
+    }
+</script>
+</body>
+</html>
