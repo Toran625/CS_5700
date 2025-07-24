@@ -55,6 +55,7 @@ fun TrackerCard(
                 Text("Location: ${helper.currentLocation}")
                 val expected = helper.expectedDeliveryDateTimestamp
                 Text("Expected Delivery: ${if (expected > 0) formatTimestamp(expected) else "N/A"}")
+                Text("Created At: ${formatTimestamp(helper.createdTimestamp)}")
 
                 Spacer(modifier = Modifier.height(8.dp))
 

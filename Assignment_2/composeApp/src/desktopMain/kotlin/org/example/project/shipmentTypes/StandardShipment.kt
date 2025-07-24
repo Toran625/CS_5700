@@ -4,8 +4,9 @@ class StandardShipment(
     id: String,
     status: String,
     expectedDeliveryDateTimestamp: Long,
-    currentLocation: String
-) : Shipment(id, status, expectedDeliveryDateTimestamp, currentLocation) {
+    currentLocation: String,
+    createdTimestamp: Long
+) : Shipment(id, status, expectedDeliveryDateTimestamp, currentLocation, createdTimestamp) {
 
     override val shipmentType = "Standard"
 

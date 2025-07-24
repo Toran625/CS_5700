@@ -35,7 +35,7 @@ class TrackingServer() {
                     val (updateType, shipmentId, timestamp, otherInfo, method) = parsedUpdate
 
                     val shipment = if (updateType.lowercase() == "created" && !shipments.containsKey(shipmentId)) {
-                        addShipment(shipmentId, updateType, otherInfo)
+                        addShipment(shipmentId, updateType, otherInfo, timestamp)
                     } else {
                         findShipment(shipmentId)
                     }
@@ -72,15 +72,15 @@ class TrackingServer() {
 //        return shipment
 //    }
 
-    fun addShipment(id: String, initialStatus: String, otherInfo: String?): Shipment {
+    fun addShipment(id: String, initialStatus: String, otherInfo: String?, timestamp: Long): Shipment {
         val expectedDelivery = 0L
         val location = "Origin Facility"
 
         val shipment: Shipment = when (otherInfo?.lowercase()?.trim()) {
-            "bulk" -> BulkShipment(id, initialStatus, expectedDelivery, location)
-            "express" -> ExpressShipment(id, initialStatus, expectedDelivery, location)
-            "overnight" -> OvernightShipment(id, initialStatus, expectedDelivery, location)
-            else -> StandardShipment(id, initialStatus, expectedDelivery, location)
+            "bulk" -> BulkShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            "express" -> ExpressShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            "overnight" -> OvernightShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            else -> StandardShipment(id, initialStatus, expectedDelivery, location, timestamp)
         }
 
         shipments[id] = shipment

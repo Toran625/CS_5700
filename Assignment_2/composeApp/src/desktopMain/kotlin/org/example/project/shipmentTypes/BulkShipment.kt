@@ -4,8 +4,9 @@ class BulkShipment(
     id: String,
     status: String,
     expectedDeliveryDateTimestamp: Long,
-    currentLocation: String
-) : Shipment(id, status, expectedDeliveryDateTimestamp, currentLocation) {
+    currentLocation: String,
+    createdTimestamp: Long
+) : Shipment(id, status, expectedDeliveryDateTimestamp, currentLocation, createdTimestamp) {
 
     override val shipmentType = "Bulk"
 
@@ -25,6 +26,16 @@ class BulkShipment(
             otherInfo = otherInfo
         )
 
+        println("${expectedDeliveryDateTimestamp} before apply")
+
         update.applyToShipment(this)
+
+        if (expectedDeliveryDateTimestamp != 0L) {
+            val threeDaysAfterCreation = createdTimestamp + (3 * 24 * 60 * 60 * 1000)
+            println("${expectedDeliveryDateTimestamp} after apply, before check")
+            if (expectedDeliveryDateTimestamp < threeDaysAfterCreation &&updateType.lowercase() != "delayed") {
+                addNote("A bulk shipment was updated with a delivery date too soon after creation.")
+            }
+        }
     }
 }
