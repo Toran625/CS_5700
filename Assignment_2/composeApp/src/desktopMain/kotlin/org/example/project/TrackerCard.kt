@@ -28,7 +28,7 @@ fun TrackerCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Shipment ID: ${helper.id}",
+                        text = "${helper.shipmentType} Shipment",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Button(
@@ -38,6 +38,15 @@ fun TrackerCard(
                     ) {
                         Text("✕", fontSize = 12.sp)
                     }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Shipment ID: ${helper.id}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

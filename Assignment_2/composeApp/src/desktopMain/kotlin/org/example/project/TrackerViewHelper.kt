@@ -10,6 +10,7 @@ class TrackerViewHelper : ShipmentObserver{
     var currentLocation by mutableStateOf("")
     var notes = mutableStateListOf<String>()
     var updateHistory = mutableStateListOf<ShipmentUpdate>()
+    var shipmentType by mutableStateOf("")
 
     override fun update(
         id: String,
@@ -17,12 +18,14 @@ class TrackerViewHelper : ShipmentObserver{
         expectedDeliveryDateTimestamp: Long,
         currentLocation: String,
         notes: MutableList<String>,
-        updateHistory: MutableList<ShipmentUpdate>
+        updateHistory: MutableList<ShipmentUpdate>,
+        shipmentType: String
     ) {
         this.id = id
         this.status = status
         this.expectedDeliveryDateTimestamp = expectedDeliveryDateTimestamp
         this.currentLocation = currentLocation
+        this.shipmentType = shipmentType
 
         this.notes.clear()
         this.notes.addAll(notes)
