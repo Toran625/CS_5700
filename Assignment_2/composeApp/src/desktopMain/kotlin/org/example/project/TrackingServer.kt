@@ -61,17 +61,6 @@ class TrackingServer() {
     fun findShipment(id: String): Shipment? = shipments[id]
 
 
-//    fun addShipment(id: String, initialStatus: String, otherInfo: String?): Shipment {
-//        val shipment = Shipment(
-//            id = id,
-//            status = initialStatus,
-//            expectedDeliveryDateTimestamp = 0,
-//            currentLocation = otherInfo ?: "Origin Facility"
-//        )
-//        shipments[id] = shipment
-//        return shipment
-//    }
-
     fun addShipment(id: String, initialStatus: String, otherInfo: String?, timestamp: Long): Shipment {
         val expectedDelivery = 0L
         val location = "Origin Facility"
