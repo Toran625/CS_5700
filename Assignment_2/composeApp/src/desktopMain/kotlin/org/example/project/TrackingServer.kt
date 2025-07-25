@@ -26,21 +26,20 @@ class TrackingServer() {
             routing {
                 post("/update") {
                     val req = call.receive<UpdateRequest>()
+
                     val parsedUpdate = parseUpdate(req.rawUpdate) ?: run {
                         call.respond(HttpStatusCode.BadRequest, "Invalid update format.")
                         return@post
                     }
-                    println("I got an update")
+
                     val (updateType, shipmentId, timestamp, otherInfo, method) = parsedUpdate
 
                     val shipment = if (updateType.lowercase() == "created" && !shipments.containsKey(shipmentId)) {
-                        println("I made a nerd!")
-                        addShipment(shipmentId, updateType, otherInfo)
+                        addShipment(shipmentId, updateType, otherInfo, timestamp)
                     } else {
-                        println("I found a previous nerd")
                         findShipment(shipmentId)
                     }
-                    println("Did i make a shipment?")
+
                     if (shipment == null) {
                         call.respond(HttpStatusCode.NotFound, "Shipment not found.")
                         return@post
@@ -48,11 +47,10 @@ class TrackingServer() {
 
                     shipment.receiveUpdate(updateType, shipmentId, timestamp, otherInfo, method)
 
-
                     call.respond(HttpStatusCode.OK, "Update applied.")
                 }
-                staticResources("/", "static") { // Maps requests to / to the 'static' resource package
-                    default("index.html") // Serves index.html when a directory is requested
+                staticResources("/", "static") {
+                    default("index.html")
                 }
 
             }
@@ -63,13 +61,17 @@ class TrackingServer() {
     fun findShipment(id: String): Shipment? = shipments[id]
 
 
-    fun addShipment(id: String, initialStatus: String, otherInfo: String?): Shipment {
-        val shipment = Shipment(
-            id = id,
-            status = initialStatus,
-            expectedDeliveryDateTimestamp = 0,
-            currentLocation = otherInfo ?: "Origin Facility"
-        )
+    fun addShipment(id: String, initialStatus: String, otherInfo: String?, timestamp: Long): Shipment {
+        val expectedDelivery = 0L
+        val location = "Origin Facility"
+
+        val shipment: Shipment = when (otherInfo?.lowercase()?.trim()) {
+            "bulk" -> BulkShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            "express" -> ExpressShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            "overnight" -> OvernightShipment(id, initialStatus, expectedDelivery, location, timestamp)
+            else -> StandardShipment(id, initialStatus, expectedDelivery, location, timestamp)
+        }
+
         shipments[id] = shipment
         return shipment
     }
@@ -84,17 +86,12 @@ class TrackingServer() {
         val timestampStr = parts[2]
         val otherInfo = parts.getOrNull(3)
 
-        // Validate timestamp
         val timestamp = timestampStr.toLongOrNull() ?: return null
 
-        // Get method (throws if unknown)
         val method = getUpdateMethodFor(updateType)
-
-        // You can add more logic here if needed, like checking shipment existence, etc.
 
         return ParsedUpdate(updateType, shipmentId, timestamp, otherInfo, method)
     }
-
 
 
     private fun getUpdateMethodFor(status: String): UpdateMethod {
@@ -115,7 +112,7 @@ class TrackingServer() {
 @Serializable
 data class UpdateRequest(val rawUpdate: String)
 
-data class ParsedUpdate(
+private data class ParsedUpdate(
     val updateType: String,
     val shipmentId: String,
     val timestamp: Long,

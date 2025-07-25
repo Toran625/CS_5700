@@ -2,12 +2,14 @@ package org.example.project
 
 import java.util.*
 
-class Shipment(
+abstract class Shipment(
     var id: String,
     var status: String,
     var expectedDeliveryDateTimestamp: Long,
-    var currentLocation: String
+    var currentLocation: String,
+    var createdTimestamp: Long
 ): Subject<ShipmentObserver> {
+    abstract val shipmentType: String;
     val notes = mutableListOf<String>()
     val updateHistory = mutableListOf<ShipmentUpdate>()
 
@@ -15,27 +17,16 @@ class Shipment(
 
     fun addNote(note: String) {
         notes += note
+        notifyObservers()
     }
 
-    fun receiveUpdate(
+    abstract fun receiveUpdate(
         updateType: String,
         shipmentId: String,
         timestamp: Long,
         otherInfo: String?,
         method: UpdateMethod
-    ) {
-
-        val update = ShipmentUpdate(
-            previousStatus = this.status,
-            updateType = updateType,
-            shipmentId = shipmentId,
-            timestamp = timestamp,
-            method = method,
-            otherInfo = otherInfo
-        )
-
-        update.applyToShipment(this)
-    }
+    )
 
     fun addUpdate(update: ShipmentUpdate) {
         updateHistory += update
@@ -44,7 +35,7 @@ class Shipment(
 
     override fun addObserver(observer: ShipmentObserver) {
         observers += observer
-        observer.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory)
+        observer.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory, shipmentType, createdTimestamp)
     }
 
     override fun removeObserver(observer: ShipmentObserver) {
@@ -52,6 +43,6 @@ class Shipment(
     }
 
     override fun notifyObservers() {
-        observers.forEach{it.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory)}
+        observers.forEach{it.update(id, status, expectedDeliveryDateTimestamp, currentLocation, notes, updateHistory, shipmentType, createdTimestamp)}
     }
 }
