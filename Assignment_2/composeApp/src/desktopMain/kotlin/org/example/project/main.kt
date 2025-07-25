@@ -6,7 +6,7 @@ import kotlinx.coroutines.*
 
 fun main() {
 
-    val trackingServer = TrackingServer()
+    val trackingServer = TrackingServer.instance
 
     application {
         CoroutineScope(Dispatchers.Default).launch{

@@ -16,7 +16,7 @@ class TrackingServerTest {
 
     @BeforeEach
     fun setUp() {
-        server = TrackingServer()
+        server = TrackingServer.instance
     }
 
     @Test

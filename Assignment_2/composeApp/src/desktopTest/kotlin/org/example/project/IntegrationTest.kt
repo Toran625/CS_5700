@@ -11,7 +11,7 @@ class IntegrationTest {
 
     @BeforeEach
     fun setUp() {
-        server = TrackingServer()
+        server = TrackingServer.instance
         helper = TrackerViewHelper()
     }
 

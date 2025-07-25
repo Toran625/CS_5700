@@ -10,7 +10,7 @@ class ErrorHandlingTest {
 
     @BeforeEach
     fun setUp() {
-        server = TrackingServer()
+        server = TrackingServer.instance
     }
 
     @Test

@@ -14,7 +14,12 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.http.content.staticResources
 
 
-class TrackingServer() {
+class TrackingServer private constructor(){
+
+    companion object {
+        val instance: TrackingServer by lazy { TrackingServer() }
+    }
+
     private val shipments = mutableMapOf<String, Shipment>()
 
 
