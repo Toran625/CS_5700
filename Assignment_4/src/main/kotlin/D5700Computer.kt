@@ -2,7 +2,10 @@ import java.io.File
 
 class D5700Computer private constructor() {
     private val cpu = CPU()
-
+    private val memory = Memory()
+    private val display = Display()
+    private val keyboard = Keyboard()
+    private val scheduler = CPUScheduler.getInstance()
 
     companion object {
         @Volatile
@@ -16,11 +19,34 @@ class D5700Computer private constructor() {
     }
 
     fun loadProgram(filePath: String) {
-        //implement
+        try {
+            val romData = File(filePath).readBytes()
+            if (romData.size > 4096) {
+                throw IllegalArgumentException("ROM file too large (max 4KB)")
+            }
+            memory.loadROM(romData)
+            println("Program loaded successfully (${romData.size} bytes)")
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to load program: ${e.message}")
+        }
     }
 
     fun start() {
-        //implement
+        cpu.initialize(memory, display, keyboard)
+        display.clear()
+        display.render()
+        println("D5700 Computer started. Press Ctrl+C to stop.")
+        scheduler.scheduleExecution(cpu)
+
+        try {
+            Thread.currentThread().join()
+        } catch (e: InterruptedException) {
+            stop()
+        }
     }
 
+    fun stop() {
+        scheduler.shutdown()
+        println("\nD5700 Computer stopped.")
+    }
 }
