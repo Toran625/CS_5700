@@ -9,7 +9,7 @@ class CPU {
     private lateinit var memory: Memory
     private lateinit var display: Display
     private lateinit var keyboard: Keyboard
-//    private val instructionFactory = InstructionFactory()
+    private val instructionFactory = InstructionFactory()
 
     fun initialize(memory: Memory, display: Display, keyboard: Keyboard) {
         this.memory = memory
@@ -20,7 +20,22 @@ class CPU {
     fun executeInstruction() {
         if (!running) return
 
-        //work on this next
+        try {
+            val instructionWord = fetchInstruction()
+            if (instructionWord.toInt() == 0x0000) {
+                println("Program terminated normally (0000 instruction)")
+                running = false
+                return
+            }
+
+            val opcode = ((instructionWord.toInt() and 0xF000) ushr 12).toByte()
+            val instruction = instructionFactory.createInstruction(opcode)
+            instruction.execute(this, memory, display, keyboard, instructionWord)
+
+        } catch (e: Exception) {
+            println("CPU Error: ${e.message}")
+            running = false
+        }
     }
 
     private fun fetchInstruction(): Short {
