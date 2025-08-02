@@ -11,10 +11,16 @@ class CPU {
     private lateinit var keyboard: Keyboard
     private val instructionFactory = InstructionFactory()
 
+    private var onShutdown: (() -> Unit)? = null
+
     fun initialize(memory: Memory, display: Display, keyboard: Keyboard) {
         this.memory = memory
         this.display = display
         this.keyboard = keyboard
+    }
+
+    fun setShutdownCallback(callback: () -> Unit) {
+        onShutdown = callback
     }
 
     fun executeInstruction() {
@@ -23,8 +29,8 @@ class CPU {
         try {
             val instructionWord = fetchInstruction()
             if (instructionWord.toInt() == 0x0000) {
-                println("Program terminated normally (0000 instruction)")
                 running = false
+                onShutdown?.invoke()
                 return
             }
 
@@ -35,6 +41,7 @@ class CPU {
         } catch (e: Exception) {
             println("CPU Error: ${e.message}")
             running = false
+            onShutdown?.invoke()
         }
     }
 

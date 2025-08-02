@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.system.exitProcess
 
 class D5700Computer private constructor() {
     private val cpu = CPU()
@@ -25,7 +26,6 @@ class D5700Computer private constructor() {
                 throw IllegalArgumentException("ROM file too large (max 4KB)")
             }
             memory.loadROM(romData)
-            println("Program loaded successfully (${romData.size} bytes)")
         } catch (e: Exception) {
             throw RuntimeException("Failed to load program: ${e.message}")
         }
@@ -33,9 +33,14 @@ class D5700Computer private constructor() {
 
     fun start() {
         cpu.initialize(memory, display, keyboard)
+
+        cpu.setShutdownCallback {
+            stop()
+            exitProcess(0) // Exit the program cleanly
+        }
+
         display.clear()
         display.render()
-        println("D5700 Computer started. Press Ctrl+C to stop.")
         scheduler.scheduleExecution(cpu)
 
         try {
@@ -47,6 +52,5 @@ class D5700Computer private constructor() {
 
     fun stop() {
         scheduler.shutdown()
-        println("\nD5700 Computer stopped.")
     }
 }
