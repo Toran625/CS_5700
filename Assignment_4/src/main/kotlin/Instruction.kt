@@ -1,8 +1,8 @@
 abstract class Instruction {
-    protected var operand1: Int = 0
-    protected var operand2: Int = 0
-    protected var operand3: Int = 0
-    protected var fullOperand: Int = 0
+    var operand1: Int = 0
+    var operand2: Int = 0
+    var operand3: Int = 0
+    var fullOperand: Int = 0
 
     fun execute(cpu: CPU, memory: Memory, display: Display, keyboard: Keyboard, instructionWord: Short) {
         parseOperands(instructionWord)
