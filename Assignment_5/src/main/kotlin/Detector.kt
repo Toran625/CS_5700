@@ -3,7 +3,7 @@ abstract class Detector {
 
     abstract fun getInitialState(): State
 
-    open fun setState(newState: State) {
+    fun setState(newState: State) {
         currentState = newState
     }
 
